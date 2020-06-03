@@ -24,29 +24,38 @@ class PointController {
       uf,
       items = []
     } = request.body
-    const [point_id] = await Database("points").insert({
-      name, 
-      email, 
-      whatsapp, 
-      latitude, 
-      logitude, 
-      city, 
-      uf, 
-      image_url: "image faker"
-    })
 
-    if(items.length > 0) {
-      const serialiazedPointItems = items.map(item => ({
-        point_id,
-        item_id: item
-      }))
-      await Database("point_items").insert(serialiazedPointItems)
+    try {
+      const trx = await Database.transaction()
+      const [point_id] = await trx("points").insert({
+        name, 
+        email, 
+        whatsapp, 
+        latitude, 
+        logitude, 
+        city, 
+        uf, 
+        image_url: "image faker"
+      })
+
+      if(items.length > 0) {
+        const serialiazedPointItems = items.map(item => ({
+          point_id,
+          item_id: item
+        }))
+        await trx("point_items").insert(serialiazedPointItems)
+      }
+      
+      await trx.commit()
+
+      return response.status(201).json({
+        success: true
+      })
+
+    } catch (err) {
+      return response.status(400).json()
     }
-
-
-    return response.status(201).json({
-      success: true
-    })
+    
   }
 }
 
