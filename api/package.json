@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "tsnd --no-notify --watch src src/server.ts",
-    "migrate:latest": "yarn knex migrate:latest --knexfile knexfile.ts"
+    "seeds": "knex seed:run --knexfile knexfile.ts",
+    "migrate:latest": "knex migrate:latest --knexfile knexfile.ts"
   },
   "dependencies": {
     "express": "^4.17.1",

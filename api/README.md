@@ -1,5 +1,12 @@
 # API
 
+## Resources
+
+  - Store collect points;
+  - List all item of an collect point;
+  - List collect poinst by city, uf or items;
+  - Show an unique collect point;
+
 ## Entities
 
 ### Points (collect point)
