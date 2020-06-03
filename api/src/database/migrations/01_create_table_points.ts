@@ -7,6 +7,8 @@ export async function up(knex: Knex) {
       .notNullable()
     builder.string("email", 50)
       .notNullable()
+    builder.string("whatsapp", 50)
+      .notNullable()
     builder.decimal("latitude")
       .notNullable()
     builder.decimal("logitude")

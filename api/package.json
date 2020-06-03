@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "tsnd --no-notify --watch src src/server.ts",
+    "dev": "tsnd --no-notify --transpileOnly --ignore-watch node_modules --watch src src/server.ts",
     "seeds": "knex seed:run --knexfile knexfile.ts",
     "migrate:latest": "knex migrate:latest --knexfile knexfile.ts"
   },
