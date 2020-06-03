@@ -4,11 +4,13 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "tsnd --no-notify --watch src src/server.ts"
+    "dev": "tsnd --no-notify --watch src src/server.ts",
+    "migrate:latest": "yarn knex migrate:latest --knexfile knexfile.ts"
   },
   "dependencies": {
     "express": "^4.17.1",
-    "knex": "^0.21.1"
+    "knex": "^0.21.1",
+    "mysql": "^2.18.1"
   },
   "devDependencies": {
     "@types/express": "^4.17.6",
