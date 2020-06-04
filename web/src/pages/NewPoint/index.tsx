@@ -1,14 +1,37 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import { Map, TileLayer, Marker } from "react-leaflet";
 
 import { Container } from "./styles"
 
+import api from "../../services/api";
+
 import logo from "../../assets/logo.svg"
 import { Link } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
 
+interface Item {
+  id: number
+  title: string
+  image_url: string
+}
+
 const NewPointPage: React.FC = () => {
+
+  const [items, setItems] = useState<Item[]>([])
+
+  useEffect(() => {
+    loadItems()
+      .then(() => {
+        console.log('load items ok')
+      }).catch(console.error)
+  }, [])
+
+  async function loadItems() {
+    const response = await api.get<Item[]>("/items")
+    setItems(response.data)
+  }
+
   return (
     <Container>
       <header>
@@ -114,30 +137,12 @@ const NewPointPage: React.FC = () => {
           </legend>
 
           <ul className="items-grid">
-            <li>
-              <img src="http://localhost:3333/files/lampadas.svg" alt="Item"/>
-              <span>Oleo de cozinha</span>
-            </li>
-            <li>
-              <img src="http://localhost:3333/files/lampadas.svg" alt="Item"/>
-              <span>Oleo de cozinha</span>
-            </li>
-            <li className="selected">
-              <img src="http://localhost:3333/files/lampadas.svg" alt="Item"/>
-              <span>Oleo de cozinha</span>
-            </li>
-            <li>
-              <img src="http://localhost:3333/files/lampadas.svg" alt="Item"/>
-              <span>Oleo de cozinha</span>
-            </li>
-            <li>
-              <img src="http://localhost:3333/files/lampadas.svg" alt="Item"/>
-              <span>Oleo de cozinha</span>
-            </li>
-            <li>
-              <img src="http://localhost:3333/files/lampadas.svg" alt="Item"/>
-              <span>Oleo de cozinha</span>
-            </li>
+            {items.map(item => (
+              <li key={item.id}>
+                <img src={item.image_url} alt={item.title} />
+                <span>{item.title}</span>
+              </li>
+            ))}
           </ul>
         </fieldset>
         <button type="submit">Cadastrar ponto de coleta</button>
