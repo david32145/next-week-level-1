@@ -15,5 +15,6 @@ routes
 routes
   .post("/points", PointController.store)
   .get("/points/:id", PointController.show)
+  .get("/points", PointController.index)
 
 export default routes

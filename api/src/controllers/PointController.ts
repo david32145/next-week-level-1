@@ -12,6 +12,9 @@ interface RequestBody {
   items: number[]
 }
 
+type Query = {city: string, uf: string, items: string}
+
+
 class PointController {
   public async store(request: Request<{}, {}, RequestBody>, response: Response): Promise<Response> {
     const {
@@ -70,10 +73,30 @@ class PointController {
     const point = await Database("points")
       .where('id', id)
       .first()
+
+    const items = await Database("items")
+      .select("items.id", "items.title", "items.image_url")
+      .join("point_items", "items.id", "point_items.item_id")
+      .where("point_items.point_id", point.id)
+    point.items = items
     if(!point) {
       return response.status(404).json({message: 'point not found'})
     }
     return response.status(200).json(point)
+  }
+
+  public async index(request: Request<{}, {}, {}, Query>, response: Response): Promise<Response> {
+    const { city, uf, items } = request.query
+    const itemsString = String(items).split(",").map(s => Number(s.trim()))
+    const points = await Database("points")
+      .join("point_items", "points.id", "=","point_items.point_id")
+      .whereIn("point_items.item_id", itemsString)
+      .where("city", city)
+      .where("uf", uf)
+      .distinct()
+      .select("points.*")
+
+    return response.status(200).json(points)
   }
 }
 
