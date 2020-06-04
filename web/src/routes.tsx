@@ -3,12 +3,9 @@ import {BrowserRouter, Switch, Route} from "react-router-dom";
 
 import PageHome from "./pages/Home";
 
-import HeaderComponent from "./components/Header" 
-
 const AppRoutes: React.FC = () => {
   return (
     <BrowserRouter>
-      <HeaderComponent />
       <Switch>
         <Route path="/" exact component={PageHome} />
       </Switch>
@@ -17,5 +14,3 @@ const AppRoutes: React.FC = () => {
 };
 
 export default AppRoutes;
-
-

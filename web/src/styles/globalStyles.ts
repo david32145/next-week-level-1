@@ -30,6 +30,6 @@ export default createGlobalStyle`
 
   h1, h2, h3, h4, h5, h6 {
     color: var(--title-color);
-    font-family: Ubuntu;
+    font-family: Roboto, Arial, Helvetica, sans-serif;
   }
 `;

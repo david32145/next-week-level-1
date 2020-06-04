@@ -1,9 +1,17 @@
 import React from "react";
 
-import {Header} from "./styles";
+import { Header } from "./styles";
 
-const HeaderComponent: React.FC = () => {
-  return <Header>meu Header</Header>
+interface HeaderComponentProps {
+  title?: string
+}
+
+const HeaderComponent: React.FC<HeaderComponentProps> = ({ title }) => {
+  return (
+    <Header>
+      <h1>{title}</h1>
+    </Header>
+  );
 };
 
 export default HeaderComponent;
