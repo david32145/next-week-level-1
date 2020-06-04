@@ -7,7 +7,7 @@ import PointController from "./controllers/PointController"
 const routes = Router()
 
 routes
-  .get("/files", ExpressStatic(path.resolve(__dirname, "..", "uploads")))
+  .use("/files", ExpressStatic(path.resolve(__dirname, "..", "uploads")))
 
 routes
   .get("/items", ItemController.index)

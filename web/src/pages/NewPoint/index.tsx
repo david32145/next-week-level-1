@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
+import axios from "axios";
 
 import { Map, TileLayer, Marker } from "react-leaflet";
 
 import { Container } from "./styles"
 
 import api from "../../services/api";
+
+import data from "../../assets/data.json"
 
 import logo from "../../assets/logo.svg"
 import { Link } from "react-router-dom";
@@ -16,27 +19,67 @@ interface Item {
   image_url: string
 }
 
+interface State {
+  name: string
+  sigla: string
+}
+
+interface UFResponse {
+  UF: State[]
+}
+
 const NewPointPage: React.FC = () => {
 
   const [items, setItems] = useState<Item[]>([])
+  const [ufs, setUfs] = useState<State[]>([])
+  const [cities, setCities] = useState<string[]>([])
+
+  const [uf, setUf] = useState<string>("0")
+  const [city, setCity] = useState<string>("0")
+
+  const loadUfs = useCallback(async () => {
+    console.log(data)
+    const ufs = data.estados
+    setUfs(ufs.map(uf => ({
+      name: uf.nome,
+      sigla: uf.sigla
+    })))
+  }, [])
+
+  const loadItems = useCallback(async () => {
+    const response = await api.get<Item[]>("/items")
+    setItems(response.data)
+  }, [])
 
   useEffect(() => {
     loadItems()
       .then(() => {
         console.log('load items ok')
-      }).catch(console.error)
-  }, [])
+      })
+      .catch(console.error)
 
-  async function loadItems() {
-    const response = await api.get<Item[]>("/items")
-    setItems(response.data)
+      loadUfs()
+  }, [loadUfs, loadItems])
+
+  function loadCities(newUf: string) {
+    const currentUf = data.estados.find(uf => uf.sigla.toLowerCase() === newUf.toLowerCase())
+    setCities(currentUf?.cidades || [])
+  }
+
+  function handlerChangeUf(event: React.ChangeEvent<HTMLSelectElement>) {
+    setUf(event.target.value)
+    loadCities(event.target.value.toLowerCase())
+  }
+
+  function handlerChangeCity(event: React.ChangeEvent<HTMLSelectElement>) {
+    setCity(event.target.value)
   }
 
   return (
     <Container>
       <header>
         <img src={logo} alt="Ecoleta Logo" />
-        <Link to="/point/new">
+        <Link to="/home">
           <FiArrowLeft />
           Voltar para home
         </Link>
@@ -47,7 +90,6 @@ const NewPointPage: React.FC = () => {
           <br />
           posto de coleta
         </h1>
-
 
         <fieldset>
           <legend>
@@ -112,8 +154,13 @@ const NewPointPage: React.FC = () => {
               <select
                 name="uf"
                 id="uf"
+                value={uf}
+                onChange={handlerChangeUf}
               >
-                <option value="0">Selecione uma uf</option>
+                <option value="0">Selecione um estado</option>
+                {ufs.map(uf => (
+                  <option value={uf.sigla}>{uf.name}</option>
+                ))}
               </select>
             </div>
             <div className="field">
@@ -121,8 +168,13 @@ const NewPointPage: React.FC = () => {
               <select
                 name="city"
                 id="city"
+                value={city}
+                onChange={handlerChangeCity}
               >
                 <option value="0">Selecione uma cidade</option>
+                {cities.map(city => (
+                  <option value={city}>{city}</option>
+                ))}
               </select>
             </div>
           </div>
