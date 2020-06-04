@@ -12,6 +12,7 @@ import data from "../../assets/data.json"
 import logo from "../../assets/logo.svg"
 import { Link } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
+import { LeafletMouseEvent } from "leaflet";
 
 interface Item {
   id: number
@@ -33,6 +34,14 @@ const NewPointPage: React.FC = () => {
   const [items, setItems] = useState<Item[]>([])
   const [ufs, setUfs] = useState<State[]>([])
   const [cities, setCities] = useState<string[]>([])
+
+  const [name, setName] = useState<string>("")
+  const [email, setEmail] = useState<string>("")
+  const [whatsapp, setWhatsapp] = useState<string>("")
+  const [latitude, setLatitude] = useState<number>(0)
+  const [longitude, setLongitude] = useState<number>(0)
+  const [initialPosition, setInitialPosition] = useState<[number, number]>([0, 0])
+  const [selectedItems, setSelectedItems] = useState<number[]>([])
 
   const [uf, setUf] = useState<string>("0")
   const [city, setCity] = useState<string>("0")
@@ -59,7 +68,12 @@ const NewPointPage: React.FC = () => {
       .catch(console.error)
 
       loadUfs()
-  }, [loadUfs, loadItems])
+
+      navigator.geolocation.getCurrentPosition((position) => {
+        const { latitude, longitude } = position.coords
+        setInitialPosition([latitude, longitude])
+      })
+  }, [loadUfs, loadItems, initialPosition])
 
   function loadCities(newUf: string) {
     const currentUf = data.estados.find(uf => uf.sigla.toLowerCase() === newUf.toLowerCase())
@@ -75,6 +89,23 @@ const NewPointPage: React.FC = () => {
     setCity(event.target.value)
   }
 
+  function handlerToggleItems(itemId: number) {
+    const findItemId = selectedItems.find(itemIdValue => itemIdValue === itemId)
+    if(findItemId) {
+      setSelectedItems(selectedItems.filter(selectedItem => selectedItem !== itemId))
+    } else {
+      setSelectedItems([itemId, ...selectedItems])
+    }
+
+    console.log(selectedItems)
+  }
+
+  function handlerMapClick(event: LeafletMouseEvent) {
+    setLatitude(event.latlng.lat)
+    setLongitude(event.latlng.lng)
+  }
+
+  
   return (
     <Container>
       <header>
@@ -104,6 +135,8 @@ const NewPointPage: React.FC = () => {
               type="text"
               name="name"
               id="name"
+              value={name}
+              onChange={e => setName(e.target.value)}
             />
           </div>
 
@@ -114,6 +147,8 @@ const NewPointPage: React.FC = () => {
                 type="email"
                 name="email"
                 id="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
               />
             </div>
             <div className="field">
@@ -122,6 +157,8 @@ const NewPointPage: React.FC = () => {
                 type="text"
                 name="whatsapp"
                 id="whatsapp"
+                value={whatsapp}
+                onChange={e => setWhatsapp(e.target.value)}
               />
             </div>
           </div>
@@ -136,15 +173,16 @@ const NewPointPage: React.FC = () => {
           </legend>
 
           <Map
-            center={[-5.5398353, -40.7665306]}
+            center={initialPosition}
             zoom={15}
+            onClick={handlerMapClick}
           >
             <TileLayer 
               attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             <Marker
-              position={[-5.5398353, -40.7665306]}
+              position={[latitude, longitude]}
             />
           </Map>
 
@@ -190,7 +228,7 @@ const NewPointPage: React.FC = () => {
 
           <ul className="items-grid">
             {items.map(item => (
-              <li key={item.id}>
+              <li onClick={() => handlerToggleItems(item.id)} key={item.id}>
                 <img src={item.image_url} alt={item.title} />
                 <span>{item.title}</span>
               </li>
