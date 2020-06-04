@@ -1,5 +1,7 @@
 import React from "react";
 
+import { Map, TileLayer, Marker } from "react-leaflet";
+
 import { Container } from "./styles"
 
 import logo from "../../assets/logo.svg"
@@ -67,6 +69,19 @@ const NewPointPage: React.FC = () => {
             </h2>
             <span>Selecione o endereço do mapa</span>
           </legend>
+
+          <Map
+            center={[-5.5398353, -40.7665306]}
+            zoom={15}
+          >
+            <TileLayer 
+              attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            <Marker
+              position={[-5.5398353, -40.7665306]}
+            />
+          </Map>
 
           <div className="field-group">
             <div className="field">
