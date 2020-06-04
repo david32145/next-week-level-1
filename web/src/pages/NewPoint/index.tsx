@@ -73,7 +73,7 @@ const NewPointPage: React.FC = () => {
         const { latitude, longitude } = position.coords
         setInitialPosition([latitude, longitude])
       })
-  }, [loadUfs, loadItems, initialPosition])
+  }, [loadUfs, loadItems])
 
   function loadCities(newUf: string) {
     const currentUf = data.estados.find(uf => uf.sigla.toLowerCase() === newUf.toLowerCase())
@@ -96,8 +96,6 @@ const NewPointPage: React.FC = () => {
     } else {
       setSelectedItems([itemId, ...selectedItems])
     }
-
-    console.log(selectedItems)
   }
 
   function handlerMapClick(event: LeafletMouseEvent) {
@@ -105,7 +103,19 @@ const NewPointPage: React.FC = () => {
     setLongitude(event.latlng.lng)
   }
 
-  
+  async function handlerSavePoint(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    const pointData = {
+      name, 
+      email,
+      whatsapp, 
+      latitude, 
+      longitude,
+      items: selectedItems
+    }
+
+    console.log(pointData)
+  }
   return (
     <Container>
       <header>
@@ -115,7 +125,7 @@ const NewPointPage: React.FC = () => {
           Voltar para home
         </Link>
       </header>
-      <form>
+      <form onSubmit={handlerSavePoint}>
         <h1>
           Cadastro do
           <br />
@@ -197,7 +207,7 @@ const NewPointPage: React.FC = () => {
               >
                 <option value="0">Selecione um estado</option>
                 {ufs.map(uf => (
-                  <option value={uf.sigla}>{uf.name}</option>
+                  <option key={uf.sigla} value={uf.sigla}>{uf.name}</option>
                 ))}
               </select>
             </div>
@@ -211,7 +221,7 @@ const NewPointPage: React.FC = () => {
               >
                 <option value="0">Selecione uma cidade</option>
                 {cities.map(city => (
-                  <option value={city}>{city}</option>
+                  <option key={city} value={city}>{city}</option>
                 ))}
               </select>
             </div>
@@ -228,7 +238,11 @@ const NewPointPage: React.FC = () => {
 
           <ul className="items-grid">
             {items.map(item => (
-              <li onClick={() => handlerToggleItems(item.id)} key={item.id}>
+              <li 
+                key={item.id}
+                className={selectedItems.includes(item.id) ? "selected" : undefined}
+                onClick={() => handlerToggleItems(item.id)} 
+              >
                 <img src={item.image_url} alt={item.title} />
                 <span>{item.title}</span>
               </li>
