@@ -1,11 +1,18 @@
 import React from 'react';
-import {View, Text} from 'react-native';
+import {StatusBar} from 'react-native';
+
+import HomePage from './pages/Home';
 
 const App: React.FC = () => {
   return (
-    <View style={{flex: 1}}>
-      <Text>Olá Mundo</Text>
-    </View>
+    <>
+      <StatusBar
+        backgroundColor="transparent"
+        translucent
+        barStyle="dark-content"
+      />
+      <HomePage />
+    </>
   );
 };
 
