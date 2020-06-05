@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
-import axios from "axios";
+
+import { useHistory } from "react-router-dom";
 
 import { Map, TileLayer, Marker } from "react-leaflet";
 
@@ -45,6 +46,8 @@ const NewPointPage: React.FC = () => {
 
   const [uf, setUf] = useState<string>("0")
   const [city, setCity] = useState<string>("0")
+
+  const history = useHistory()
 
   const loadUfs = useCallback(async () => {
     console.log(data)
@@ -117,6 +120,7 @@ const NewPointPage: React.FC = () => {
     }
 
     await api.post("/points", pointData)
+    history.push("/home")
   }
   return (
     <Container>
