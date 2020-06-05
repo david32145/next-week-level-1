@@ -111,10 +111,12 @@ const NewPointPage: React.FC = () => {
       whatsapp, 
       latitude, 
       longitude,
+      uf,
+      city,
       items: selectedItems
     }
 
-    console.log(pointData)
+    await api.post("/points", pointData)
   }
   return (
     <Container>

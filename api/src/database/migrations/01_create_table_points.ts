@@ -11,7 +11,7 @@ export async function up(knex: Knex) {
       .notNullable()
     builder.decimal("latitude")
       .notNullable()
-    builder.decimal("logitude")
+    builder.decimal("longitude")
       .notNullable()
     builder.string("city", 40)
       .notNullable()
